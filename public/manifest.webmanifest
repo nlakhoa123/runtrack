@@ -1,0 +1,20 @@
+{
+  "name": "RunTrack — Theo dõi chạy bộ & cân nặng",
+  "short_name": "RunTrack",
+  "description": "Theo dõi chạy bộ và cân nặng cao cấp, đa hồ sơ, chạy nội bộ trên máy của bạn.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5fbfa",
+  "theme_color": "#0f1a22",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
