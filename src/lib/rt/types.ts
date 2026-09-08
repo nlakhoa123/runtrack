@@ -36,6 +36,8 @@ export interface RunSession {
   createdAt: number;
   /** optional GPS trace: array of {lat,lng,t} points captured during a live run */
   trace?: { lat: number; lng: number; t: number }[];
+  /** run mode: outdoor (GPS) or treadmill (step counter) */
+  mode?: "outdoor" | "treadmill";
 }
 
 export interface WeightEntry {
@@ -122,6 +124,7 @@ export type ViewId =
   | "progress"
   | "journey"
   | "stories"
+  | "locket"
   | "goals"
   | "achievements"
   | "settings";

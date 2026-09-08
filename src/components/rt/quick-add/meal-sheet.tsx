@@ -64,6 +64,13 @@ export function MealSheet() {
         body: JSON.stringify({ text }),
       });
       const data = await res.json();
+      if (data.error) {
+        toast.error("AI chưa phản hồi được lúc này", { description: data.error });
+        // still show what we got (may be 0s)
+      }
+      if (!data.items || data.items.length === 0 || data.totalCalories === 0) {
+        toast.warning("AI không nhận diện được món ăn", { description: "Thử mô tả cụ thể hơn, vd: '1 bát cơm, 150g ức gà'" });
+      }
       setParsed(data);
     } catch (e) {
       console.error(e);

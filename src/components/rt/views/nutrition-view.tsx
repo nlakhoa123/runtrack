@@ -101,24 +101,32 @@ export default function NutritionView() {
           <MacroTile icon={<Droplet className="h-4 w-4" />} label="Fat" value={todayTotals.fat} unit="g" color="var(--brand-violet)" />
         </div>
 
-        {/* energy balance */}
-        <div className="mt-3 flex items-center justify-between rounded-2xl border border-border/60 bg-card/60 px-4 py-3">
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Cân bằng năng lượng</p>
-            <p className="text-sm font-bold">
-              Nạp <span className="tnum text-[color:var(--brand-coral)]">{todayTotals.calories}</span> · Đốt <span className="tnum text-emerald-500">{Math.round(weekBurned / 7)}</span> kcal/ngày
-            </p>
+        {/* energy balance — only show when user has logged at least 1 meal today */}
+        {todayMeals.length > 0 ? (
+          <div className="mt-3 flex items-center justify-between rounded-2xl border border-border/60 bg-card/60 px-4 py-3">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Cân bằng năng lượng</p>
+              <p className="text-sm font-bold">
+                Nạp <span className="tnum text-[color:var(--brand-coral)]">{todayTotals.calories}</span> · Đốt <span className="tnum text-emerald-500">{Math.round(weekBurned / 7)}</span> kcal/ngày
+              </p>
+            </div>
+            <span className={cn(
+              "rounded-full px-3 py-1 text-xs font-bold",
+              todayTotals.calories - Math.round(weekBurned / 7) > 0
+                ? "bg-[color:var(--brand-amber)]/15 text-[color:var(--brand-amber)]"
+                : "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+            )}>
+              {todayTotals.calories - Math.round(weekBurned / 7) > 0 ? "+" : ""}
+              {todayTotals.calories - Math.round(weekBurned / 7)} kcal
+            </span>
           </div>
-          <span className={cn(
-            "rounded-full px-3 py-1 text-xs font-bold",
-            todayTotals.calories - Math.round(weekBurned / 7) > 0
-              ? "bg-[color:var(--brand-amber)]/15 text-[color:var(--brand-amber)]"
-              : "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
-          )}>
-            {todayTotals.calories - Math.round(weekBurned / 7) > 0 ? "+" : ""}
-            {todayTotals.calories - Math.round(weekBurned / 7)} kcal
-          </span>
-        </div>
+        ) : (
+          <div className="mt-3 flex items-center gap-2 rounded-2xl border border-dashed border-border/60 bg-muted/30 px-4 py-3">
+            <span className="text-sm text-muted-foreground">
+              📝 Ghi bữa ăn hôm nay để xem cân bằng năng lượng
+            </span>
+          </div>
+        )}
       </SectionCardComp>
 
       {/* AI meal plan */}

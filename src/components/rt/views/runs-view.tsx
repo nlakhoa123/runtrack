@@ -458,10 +458,13 @@ export default function RunsView() {
                   <Cell
                     key={d.label}
                     fill={
-                      d.isCurrent
-                        ? "url(#runsBarGradCurrent)"
-                        : "url(#runsBarGrad)"
+                      d.km === 0
+                        ? "var(--muted-foreground)"
+                        : d.isCurrent
+                          ? "url(#runsBarGradCurrent)"
+                          : "url(#runsBarGrad)"
                     }
+                    fillOpacity={d.km === 0 ? 0.12 : 1}
                   />
                 ))}
               </Bar>
@@ -483,6 +486,11 @@ export default function RunsView() {
             </BarChart>
           </ResponsiveContainer>
         </div>
+        {chartData.filter((d) => d.km === 0).length >= 5 && (
+          <p className="mt-1 text-center text-[11px] text-muted-foreground">
+            Chưa có dữ liệu cho {chartData.filter((d) => d.km === 0).length} tuần
+          </p>
+        )}
       </SectionCard>
 
       {/* Timeline feed */}
@@ -636,6 +644,16 @@ export default function RunsView() {
                     <span className="ml-1 text-[11px] text-muted-foreground/80">
                       · {fmtDate(run.date, "d/M")}
                     </span>
+                    {/* mode badge */}
+                    {run.mode === "treadmill" ? (
+                      <span className="ml-1 inline-flex items-center gap-0.5 rounded-full bg-[color:var(--brand-amber)]/15 px-1.5 py-0.5 text-[9px] font-bold text-[color:var(--brand-amber)]" title="Chạy trên máy">
+                        🏃 máy
+                      </span>
+                    ) : run.mode === "outdoor" && run.trace && run.trace.length > 1 ? (
+                      <span className="ml-1 inline-flex items-center gap-0.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[9px] font-bold text-primary" title="GPS">
+                        📍 GPS
+                      </span>
+                    ) : null}
                   </div>
 
                   <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
