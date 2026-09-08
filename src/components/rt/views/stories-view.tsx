@@ -40,7 +40,7 @@ export default function StoriesView() {
         <div className="flex items-center justify-between gap-3">
           <div>
             <h1 className="text-2xl font-extrabold tracking-tight">Story</h1>
-            <p className="text-sm text-muted-foreground">Khoảnh khắc chạy bộ — kiểu Locket</p>
+            <p className="text-sm text-muted-foreground">Khoảnh khắc chạy bộ của bạn</p>
           </div>
         </div>
         <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-border bg-card/50 px-6 py-16 text-center">
@@ -65,7 +65,7 @@ export default function StoriesView() {
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight">Story</h1>
-          <p className="text-sm text-muted-foreground">{stories.length} khoảnh khắc · kiểu Locket</p>
+          <p className="text-sm text-muted-foreground">{stories.length} khoảnh khắc · nhật ký chạy bộ</p>
         </div>
         <Button onClick={startStoryCapture} className="gap-2 grad-primary border-transparent text-white shadow-soft hover:opacity-90">
           <Plus className="h-4 w-4" /> Tạo story

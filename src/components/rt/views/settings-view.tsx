@@ -408,7 +408,7 @@ export default function SettingsView() {
       {/* Account (server auth) */}
       <SectionCard
         title="Tài khoản"
-        subtitle="Đăng nhập server — chia sẻ story nhóm"
+        subtitle="Đăng nhập server — đồng bộ thiết bị"
         icon={<LogIn className="h-4 w-4" />}
         delay={0.15}
       >
@@ -523,8 +523,11 @@ export default function SettingsView() {
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {[
             { keys: "N", label: "Ghi buổi chạy mới" },
+            { keys: "L", label: "Chạy trực tiếp (GPS)" },
             { keys: "W", label: "Ghi cân nặng" },
-            { keys: "1–7", label: "Chuyển nhanh giữa các trang" },
+            { keys: "F", label: "Ghi bữa ăn (AI)" },
+            { keys: "S", label: "Tạo story" },
+            { keys: "1-9", label: "Chuyển nhanh giữa các trang" },
             { keys: "Esc", label: "Đóng bảng nhập" },
           ].map((s) => (
             <div

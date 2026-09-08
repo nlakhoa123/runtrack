@@ -81,7 +81,7 @@ export function AuthGate() {
           Run<span className="text-grad-primary">Track</span>
         </motion.h1>
         <p className="mt-2 text-center text-sm text-muted-foreground">
-          Theo dõi chạy bộ &amp; chia sẻ khoảnh khắc với nhóm
+          Theo dõi chạy bộ &amp; cân nặng — nhật ký riêng của bạn
         </p>
 
         <div className="mt-6 flex w-full rounded-2xl border border-border bg-card p-1 shadow-soft">
@@ -185,7 +185,7 @@ export function AuthGate() {
         </motion.div>
 
         <p className="mt-4 text-center text-[11px] text-muted-foreground">
-          🔒 Dữ liệu chạy bộ &amp; cân nặng vẫn lưu riêng tư. Chỉ story chia sẻ mới lên server.
+          🔒 Dữ liệu chạy bộ &amp; cân nặng lưu riêng tư trên máy bạn.
         </p>
       </div>
     </div>

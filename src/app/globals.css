@@ -272,6 +272,15 @@
   }
 }
 
+/* Leaflet map customisation — rounded corners + dark tile support */
+.leaflet-container {
+  background: var(--muted);
+  font-family: var(--font-sans);
+}
+.leaflet-control-attribution {
+  display: none;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;

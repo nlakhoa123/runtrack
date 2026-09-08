@@ -18,7 +18,6 @@ import {
   X,
   Radio,
   Sparkles,
-  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -27,10 +26,9 @@ const ITEMS: { id: ViewId; label: string; icon: typeof LayoutDashboard; desc: st
   { id: "runs", label: "Lịch sử chạy", icon: Footprints, desc: "Buổi chạy & biểu đồ" },
   { id: "weight", label: "Cân nặng", icon: Scale, desc: "Xu hướng & ghi nhận" },
   { id: "nutrition", label: "Dinh dưỡng", icon: Utensils, desc: "AI tính thức ăn" },
-  { id: "stories", label: "Story", icon: Sparkles, desc: "Khoảnh khắc kiểu Locket" },
-  { id: "locket", label: "Nhóm", icon: Users, desc: "Share story với bạn bè" },
+  { id: "stories", label: "Story", icon: Sparkles, desc: "Khoảnh khắc chạy bộ" },
   { id: "progress", label: "Ảnh tiến bộ", icon: Camera, desc: "Before/After" },
-  { id: "journey", label: "Hành trình", icon: BookOpen, desc: "Story timeline" },
+  { id: "journey", label: "Hành trình", icon: BookOpen, desc: "Timeline nhật ký" },
   { id: "goals", label: "Mục tiêu", icon: Target, desc: "Cân nặng & km" },
   { id: "achievements", label: "Thành tích", icon: Trophy, desc: "Huy hiệu" },
   { id: "settings", label: "Cài đặt", icon: Settings2, desc: "Giao diện & dữ liệu" },

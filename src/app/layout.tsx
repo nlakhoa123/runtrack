@@ -23,7 +23,7 @@ const mono = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "RunTrack — Theo dõi chạy bộ & cân nặng",
   description:
-    "RunTrack: ứng dụng theo dõi chạy bộ và cân nặng cao cấp, chạy hoàn toàn nội bộ trên máy của bạn. Đa hồ sơ, biểu đồ đẹp, thành tích & PWA offline.",
+    "RunTrack: nhật ký chạy bộ và cân nặng cá nhân — đẹp, mượt, AI tính calo & thực đơn, GPS đo quãng chạy, ảnh tiến bộ.",
   applicationName: "RunTrack",
   manifest: "/manifest.webmanifest",
   appleWebApp: {

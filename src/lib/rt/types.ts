@@ -122,7 +122,6 @@ export type ViewId =
   | "progress"
   | "journey"
   | "stories"
-  | "locket"
   | "goals"
   | "achievements"
   | "settings";

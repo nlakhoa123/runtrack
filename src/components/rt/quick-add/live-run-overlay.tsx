@@ -4,7 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRtStore } from "@/store/rt-store";
 import { db, uid } from "@/lib/rt/db";
-import { haversineMeters, simplifyTrace, traceDistanceKm, traceToSvgPath, type GPSPoint } from "@/lib/rt/gps";
+import { haversineMeters, simplifyTrace, traceDistanceKm, type GPSPoint } from "@/lib/rt/gps";
+import { RouteMap } from "@/components/rt/shared/route-map";
 import { todayKey } from "@/lib/rt/dates";
 import { calcCalories, calcAvgSpeed, fmtDuration } from "@/lib/rt/utils";
 import type { RunSession, Feeling } from "@/lib/rt/types";
@@ -152,9 +153,6 @@ export function LiveRunOverlay() {
   const paceMin = Math.floor(pace / 60);
   const paceSec = Math.round(pace - paceMin * 60);
 
-  // svg path for the map
-  const svgPath = useMemo(() => traceToSvgPath(points, 300, 200, 0.06), [points]);
-
   async function saveRun() {
     if (!activeProfileId) return;
     setSaving(true);
@@ -263,28 +261,11 @@ export function LiveRunOverlay() {
             ) : (
               <div className="space-y-5">
                 {/* live map */}
-                <div className="relative aspect-[3/2] overflow-hidden rounded-3xl border border-border/60 bg-muted/40">
+                <div className="relative overflow-hidden rounded-3xl border border-border/60">
                   {points.length > 1 ? (
-                    <svg viewBox="0 0 300 200" className="h-full w-full" preserveAspectRatio="xMidYMid meet">
-                      <defs>
-                        <linearGradient id="traceGrad" x1="0" y1="0" x2="1" y2="1">
-                          <stop offset="0%" stopColor="var(--brand-mint)" />
-                          <stop offset="100%" stopColor="var(--brand-cyan)" />
-                        </linearGradient>
-                      </defs>
-                      <path d={svgPath} fill="none" stroke="url(#traceGrad)" strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round" />
-                      {/* start dot */}
-                      {points.length > 0 && svgPath && (
-                        <circle
-                          cx={parseFloat(svgPath.split("M")[1]?.split(",")[0] ?? "0")}
-                          cy={parseFloat(svgPath.split("M")[1]?.split(",")[1] ?? "0")}
-                          r={4}
-                          fill="var(--brand-teal)"
-                        />
-                      )}
-                    </svg>
+                    <RouteMap points={points} height={200} markers={false} />
                   ) : (
-                    <div className="grid h-full place-items-center text-sm text-muted-foreground">
+                    <div className="grid h-[200px] place-items-center bg-muted/40 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1.5">
                         <Navigation className="h-4 w-4 animate-pulse" /> Đang chờ tín hiệu GPS...
                       </span>

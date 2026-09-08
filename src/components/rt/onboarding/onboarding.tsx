@@ -99,7 +99,7 @@ export function Onboarding() {
                 transition={{ delay: 0.25 }}
                 className="mt-3 max-w-sm text-balance text-muted-foreground"
               >
-                Theo dõi chạy bộ & cân nặng — đẹp, mượt, hoàn toàn nội bộ trên máy của bạn. Đa hồ sơ, biểu đồ sống, thành tích mở khoá dần.
+                Theo dõi chạy bộ & cân nặng — nhật ký cá nhân. AI tính calo & thực đơn, GPS đo quãng chạy, ảnh tiến bộ, thành tích mở khoá dần.
               </motion.p>
               <motion.div
                 initial={{ opacity: 0, y: 10 }}

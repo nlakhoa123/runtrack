@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { db } from "@/lib/rt/db";
-import { traceToSvgPath } from "@/lib/rt/gps";
+import { RouteMap } from "@/components/rt/shared/route-map";
 import {
   FEELINGS,
   avatarGradient,
@@ -856,28 +856,10 @@ function RunDetailDialog({
         {run.trace && run.trace.length > 1 && (
           <div className="px-5 pb-3">
             <div className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-              <MapPin className="h-3.5 w-3.5" /> Tuyến đường GPS ({run.trace.length} điểm)
+              <MapPin className="h-3.5 w-3.5" /> Tuyến đường GPS
             </div>
-            <div className="overflow-hidden rounded-2xl border border-border/60 bg-muted/40">
-              <svg viewBox="0 0 300 200" className="h-full w-full" preserveAspectRatio="xMidYMid meet">
-                <defs>
-                  <linearGradient id="traceDetailGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="var(--brand-mint)" />
-                    <stop offset="100%" stopColor="var(--brand-cyan)" />
-                  </linearGradient>
-                </defs>
-                <path
-                  d={(() => {
-                    const points = run.trace!.map((p) => ({ lat: p.lat, lng: p.lng, t: p.t }));
-                    return traceToSvgPath(points, 300, 200, 0.06);
-                  })()}
-                  fill="none"
-                  stroke="url(#traceDetailGrad)"
-                  strokeWidth={3.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+            <div className="overflow-hidden rounded-2xl border border-border/60">
+              <RouteMap points={run.trace!} height={220} />
             </div>
           </div>
         )}

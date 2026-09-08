@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import ZAI from "z-ai-web-dev-sdk";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 export interface FoodParseInput {
   text: string;
   /** user weight in kg (for context) */
@@ -91,6 +94,7 @@ Quy tắc:
     return NextResponse.json(parsed);
   } catch (e) {
     console.error("food parse error:", e);
+    const msg = e instanceof Error ? e.message : "Lỗi không xác định";
     return NextResponse.json(
       {
         slot: "snack",
@@ -99,6 +103,7 @@ Quy tắc:
         totalProtein: 0,
         totalCarbs: 0,
         totalFat: 0,
+        error: `AI không phản hồi: ${msg}`,
       },
       { status: 200 }
     );

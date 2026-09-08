@@ -19,7 +19,6 @@ const views = {
   weight: dynamic(() => import("@/components/rt/views/weight-view")),
   nutrition: dynamic(() => import("@/components/rt/views/nutrition-view")),
   stories: dynamic(() => import("@/components/rt/views/stories-view")),
-  locket: dynamic(() => import("@/components/rt/views/locket-view")),
   progress: dynamic(() => import("@/components/rt/views/progress-view")),
   journey: dynamic(() => import("@/components/rt/views/journey-view")),
   goals: dynamic(() => import("@/components/rt/views/goals-view")),
