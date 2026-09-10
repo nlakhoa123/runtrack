@@ -1,17 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { chatCompletion, parseAIJson } from "@/lib/ai";
+import { generateMealPlan } from "@/lib/nutrition";
 
 export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
-export interface MealPlanOutput {
-  targetCalories: number;
-  proteinTarget: number;
-  carbsTarget: number;
-  fatTarget: number;
-  meals: { slot: string; suggestion: string; calories: number }[];
-  tip: string;
-}
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,68 +12,17 @@ export async function POST(req: NextRequest) {
       avgBurnedDay: number;
     };
 
-    const losing = data.targetWeight < data.weightKg;
-    const goal = losing ? "giảm cân" : data.targetWeight > data.weightKg ? "tăng cơ" : "duy trì";
-
-    const systemPrompt =
-      "Bạn là chuyên gia dinh dưỡng thể thao. Gợi ý thực đơn 1 ngày cho người chạy bộ Việt Nam, trả JSON hợp lệ.";
-
-    const userPrompt = `Gợi ý thực đơn 1 ngày cho người chạy bộ.
-- Cân nặng hiện tại: ${data.weightKg} kg
-- Mục tiêu: ${data.targetWeight} kg (${goal})
-- Mục tiêu chạy: ${data.targetKmPerWeek} km/tuần
-- Calo đốt từ chạy (TB/ngày): ${data.avgBurnedDay} kcal
-
-Trả về ĐÚNG JSON sau, KHÔNG thêm gì khác:
-{
-  "targetCalories": số kcal mục tiêu/ngày (BMR ~24*weight, +/- điều chỉnh mục tiêu, +calo đốt),
-  "proteinTarget": gam/ngày (~1.6g/kg nếu giảm cân/tăng cơ),
-  "carbsTarget": gam/ngày (ưu tiên carb phức),
-  "fatTarget": gam/ngày (~0.8g/kg),
-  "meals": [
-    { "slot": "Sáng", "suggestion": "2 quả trứng luộc + 1 củ khoai lang + bát rau muống luộc", "calories": số },
-    { "slot": "Trưa", "suggestion": "...", "calories": số },
-    { "slot": "Tối", "suggestion": "... nhẹ, ít carb", "calories": số },
-    { "slot": "Phụ", "suggestion": "... (chuối/sữa chua)", "calories": số }
-  ],
-  "tip": "Một câu mẹo ngắn cho ngày hôm nay (vd: uống 2L nước, ngủ đủ 7h)"
-}
-
-Quy tắc:
-- Thực đơn Việt Nam, nguyên liệu dễ tìm.
-- Chia phần hợp lý theo mục tiêu (giảm cân → thâm hụt ~300-500kcal; tăng cơ → dư ~200-300kcal).
-- Làm tròn số.`;
-
-    const raw = await chatCompletion(systemPrompt, userPrompt);
-    const parsed = parseAIJson<MealPlanOutput>(raw);
-
-    if (!parsed) {
-      return NextResponse.json({
-        targetCalories: Math.round(24 * data.weightKg + data.avgBurnedDay),
-        proteinTarget: Math.round(1.6 * data.weightKg),
-        carbsTarget: Math.round(3 * data.weightKg),
-        fatTarget: Math.round(0.8 * data.weightKg),
-        meals: [],
-        tip: "Uống đủ 2L nước và ngủ đủ 7 tiếng mỗi ngày.",
-        error: "AI không parse được JSON",
-      });
-    }
-
-    return NextResponse.json(parsed);
+    const result = generateMealPlan(data.weightKg, data.targetWeight, data.targetKmPerWeek, data.avgBurnedDay);
+    return NextResponse.json(result);
   } catch (e) {
     console.error("meal plan error:", e);
-    const msg = e instanceof Error ? e.message : "Lỗi không xác định";
-    return NextResponse.json(
-      {
-        targetCalories: 2000,
-        proteinTarget: 100,
-        carbsTarget: 250,
-        fatTarget: 60,
-        meals: [],
-        tip: "Không tạo được thực đơn lúc này, nhưng hãy ưu tiên protein, carb phức và uống đủ nước.",
-        error: `AI lỗi: ${msg}`,
-      },
-      { status: 200 }
-    );
+    return NextResponse.json({
+      targetCalories: 2000,
+      proteinTarget: 100,
+      carbsTarget: 250,
+      fatTarget: 60,
+      meals: [],
+      tip: "Uống đủ 2L nước và ưu tiên protein, carb phức.",
+    });
   }
 }
