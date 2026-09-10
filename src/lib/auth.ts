@@ -12,17 +12,34 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Mật khẩu", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
-        const email = credentials.email.toLowerCase().trim();
-        const user = await db.user.findUnique({ where: { email } });
-        if (!user || !user.passwordHash) return null;
-        const valid = await bcrypt.compare(credentials.password, user.passwordHash);
-        if (!valid) return null;
-        return { id: user.id, email: user.email, name: user.name ?? user.email };
+        try {
+          if (!credentials?.email || !credentials?.password) return null;
+          const email = credentials.email.toLowerCase().trim();
+          const user = await db.user.findUnique({ where: { email } });
+          if (!user || !user.passwordHash) return null;
+          const valid = await bcrypt.compare(credentials.password, user.passwordHash);
+          if (!valid) return null;
+          return { id: user.id, email: user.email, name: user.name ?? user.email };
+        } catch (e) {
+          console.error("authorize error:", e);
+          return null;
+        }
       },
     }),
   ],
   session: { strategy: "jwt" },
+  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-dev-only-12345",
+  cookies: {
+    sessionToken: {
+      name: "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: false,
+      },
+    },
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -37,5 +54,4 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
 };

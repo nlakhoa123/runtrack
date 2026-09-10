@@ -42,11 +42,15 @@ export function AuthGate() {
         password,
         redirect: false,
       });
+      console.log("signIn result:", result);
       if (result?.error) {
         toast.error("Email hoặc mật khẩu không đúng");
-      } else {
+      } else if (result?.ok) {
         toast.success(mode === "login" ? "Đăng nhập thành công 🎉" : "Tài khoản đã tạo 🎉");
-        window.location.reload();
+        // Small delay to let NextAuth set the cookie
+        setTimeout(() => window.location.reload(), 300);
+      } else {
+        toast.error("Không thể đăng nhập. Thử lại.");
       }
     } catch (e) {
       console.error(e);
@@ -68,9 +72,9 @@ export function AuthGate() {
           initial={{ scale: 0.6, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 200, damping: 14 }}
-          className="mb-6 grid h-20 w-20 place-items-center rounded-[2rem] grad-primary text-white shadow-glow"
+          className="mb-6 h-20 w-20 overflow-hidden rounded-[2rem] shadow-glow"
         >
-          <Footprints className="h-10 w-10" />
+          <img src="/logo.png" alt="RunTrack" className="h-full w-full object-cover" />
         </motion.div>
 
         <motion.h1

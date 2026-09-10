@@ -11,9 +11,9 @@
   "categories": ["health", "fitness", "lifestyle"],
   "icons": [
     {
-      "src": "/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/logo.png",
+      "sizes": "367x395",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]

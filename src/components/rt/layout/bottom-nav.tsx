@@ -49,8 +49,8 @@ export function BottomNav() {
     <>
       {/* Desktop side rail (collapsed, icon-only, hover tooltip) */}
       <nav className="sticky top-0 hidden h-screen w-[64px] shrink-0 flex-col items-center gap-1 border-r border-border/60 bg-sidebar/60 py-5 lg:flex">
-        <div className="mb-3 grid h-10 w-10 place-items-center rounded-2xl grad-primary text-white shadow-glow">
-          <Footprints className="h-5 w-5" />
+        <div className="mb-3 h-10 w-10 overflow-hidden rounded-2xl shadow-glow">
+          <img src="/logo.png" alt="RunTrack" className="h-full w-full object-cover" />
         </div>
         {ITEMS.map((item) => {
           const active = activeView === item.id;
@@ -131,8 +131,8 @@ export function BottomNav() {
             >
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="grid h-9 w-9 place-items-center rounded-xl grad-primary text-white shadow-glow">
-                    <Footprints className="h-5 w-5" />
+                  <div className="h-9 w-9 overflow-hidden rounded-xl shadow-glow">
+                    <img src="/logo.png" alt="RunTrack" className="h-full w-full object-cover" />
                   </div>
                   <span className="text-lg font-extrabold tracking-tight">
                     Run<span className="text-grad-primary">Track</span>

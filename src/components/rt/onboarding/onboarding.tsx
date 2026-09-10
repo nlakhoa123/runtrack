@@ -49,9 +49,9 @@ export function Onboarding() {
         <motion.div
           animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 1.4, repeat: Infinity }}
-          className="grid h-16 w-16 place-items-center rounded-3xl grad-primary text-white shadow-glow"
+          className="h-16 w-16 overflow-hidden rounded-3xl shadow-glow"
         >
-          <Footprints className="h-8 w-8" />
+          <img src="/logo.png" alt="RunTrack" className="h-full w-full object-cover" />
         </motion.div>
       </div>
     );
@@ -81,9 +81,9 @@ export function Onboarding() {
                 initial={{ scale: 0.6, rotate: -12 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 200, damping: 14 }}
-                className="mb-6 grid h-24 w-24 place-items-center rounded-[2rem] grad-primary text-white shadow-glow"
+                className="mb-6 h-24 w-24 overflow-hidden rounded-[2rem] shadow-glow"
               >
-                <Footprints className="h-12 w-12" />
+                <img src="/logo.png" alt="RunTrack" className="h-full w-full object-cover" />
               </motion.div>
               <motion.h1
                 initial={{ opacity: 0, y: 10 }}

@@ -32,8 +32,8 @@ export const metadata: Metadata = {
     title: "RunTrack",
   },
   icons: {
-    icon: "/icon.svg",
-    apple: "/icon.svg",
+    icon: "/logo.png",
+    apple: "/logo.png",
   },
 };
 

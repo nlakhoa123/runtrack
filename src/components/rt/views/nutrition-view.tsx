@@ -307,7 +307,15 @@ function MealPlanCard({ profile, avgBurnedDay }: { profile: Profile; avgBurnedDa
         }),
       });
       const data = await res.json();
-      setPlan(data);
+      if (data.error || (!data.meals && !data.targetCalories)) {
+        toast.error("AI không tạo được thực đơn lúc này", {
+          description: data.error || "Thử lại sau giây lát",
+        });
+        // If we got fallback data (targetCalories but no meals), still show it
+        if (data.targetCalories) setPlan(data);
+      } else {
+        setPlan(data);
+      }
     } catch (e) {
       console.error(e);
       toast.error("AI không tạo được thực đơn lúc này");

@@ -1,16 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import ZAI from "z-ai-web-dev-sdk";
+import { chatCompletion, parseAIJson } from "@/lib/ai";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-export interface MealPlanInput {
-  weightKg: number;
-  targetWeight: number;
-  targetKmPerWeek: number;
-  /** kcal burned from running this week (avg/day) */
-  avgBurnedDay: number;
-}
 
 export interface MealPlanOutput {
   targetCalories: number;
@@ -23,12 +15,18 @@ export interface MealPlanOutput {
 
 export async function POST(req: NextRequest) {
   try {
-    const data = (await req.json()) as MealPlanInput;
-
-    const zai = await ZAI.create();
+    const data = (await req.json()) as {
+      weightKg: number;
+      targetWeight: number;
+      targetKmPerWeek: number;
+      avgBurnedDay: number;
+    };
 
     const losing = data.targetWeight < data.weightKg;
     const goal = losing ? "giảm cân" : data.targetWeight > data.weightKg ? "tăng cơ" : "duy trì";
+
+    const systemPrompt =
+      "Bạn là chuyên gia dinh dưỡng thể thao. Gợi ý thực đơn 1 ngày cho người chạy bộ Việt Nam, trả JSON hợp lệ.";
 
     const userPrompt = `Gợi ý thực đơn 1 ngày cho người chạy bộ.
 - Cân nặng hiện tại: ${data.weightKg} kg
@@ -56,41 +54,25 @@ Quy tắc:
 - Chia phần hợp lý theo mục tiêu (giảm cân → thâm hụt ~300-500kcal; tăng cơ → dư ~200-300kcal).
 - Làm tròn số.`;
 
-    const completion = await zai.chat.completions.create({
-      messages: [
-        {
-          role: "assistant",
-          content:
-            "Bạn là chuyên gia dinh dưỡng thể thao. Gợi ý thực đơn 1 ngày cho người chạy bộ Việt Nam, trả JSON hợp lệ.",
-        },
-        { role: "user", content: userPrompt },
-      ],
-      thinking: { type: "disabled" },
-    });
+    const raw = await chatCompletion(systemPrompt, userPrompt);
+    const parsed = parseAIJson<MealPlanOutput>(raw);
 
-    const raw = completion.choices[0]?.message?.content ?? "";
-    let parsed: MealPlanOutput;
-    try {
-      const cleaned = raw
-        .replace(/^```json\s*/i, "")
-        .replace(/^```\s*/i, "")
-        .replace(/```\s*$/i, "")
-        .trim();
-      parsed = JSON.parse(cleaned);
-    } catch {
-      parsed = {
+    if (!parsed) {
+      return NextResponse.json({
         targetCalories: Math.round(24 * data.weightKg + data.avgBurnedDay),
         proteinTarget: Math.round(1.6 * data.weightKg),
         carbsTarget: Math.round(3 * data.weightKg),
         fatTarget: Math.round(0.8 * data.weightKg),
         meals: [],
         tip: "Uống đủ 2L nước và ngủ đủ 7 tiếng mỗi ngày.",
-      };
+        error: "AI không parse được JSON",
+      });
     }
 
     return NextResponse.json(parsed);
   } catch (e) {
     console.error("meal plan error:", e);
+    const msg = e instanceof Error ? e.message : "Lỗi không xác định";
     return NextResponse.json(
       {
         targetCalories: 2000,
@@ -99,6 +81,7 @@ Quy tắc:
         fatTarget: 60,
         meals: [],
         tip: "Không tạo được thực đơn lúc này, nhưng hãy ưu tiên protein, carb phức và uống đủ nước.",
+        error: `AI lỗi: ${msg}`,
       },
       { status: 200 }
     );

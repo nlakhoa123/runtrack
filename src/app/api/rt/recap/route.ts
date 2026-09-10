@@ -1,25 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import ZAI from "z-ai-web-dev-sdk";
+import { chatCompletion, parseAIJson } from "@/lib/ai";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-export interface RecapInput {
-  profileName: string;
-  monthLabel: string;
-  totalKm: number;
-  totalRuns: number;
-  totalCalories: number;
-  longestRunKm: number;
-  bestStreak: number;
-  weightStart?: number;
-  weightEnd?: number;
-  weightChange?: number;
-  targetWeight?: number;
-  weeklyGoalKm?: number;
-  achievementCount: number;
-  photosCount: number;
-}
 
 export interface RecapOutput {
   headline: string;
@@ -29,9 +12,25 @@ export interface RecapOutput {
 
 export async function POST(req: NextRequest) {
   try {
-    const data = (await req.json()) as RecapInput;
+    const data = (await req.json()) as {
+      profileName: string;
+      monthLabel: string;
+      totalKm: number;
+      totalRuns: number;
+      totalCalories: number;
+      longestRunKm: number;
+      bestStreak: number;
+      weightStart?: number;
+      weightEnd?: number;
+      weightChange?: number;
+      targetWeight?: number;
+      weeklyGoalKm?: number;
+      achievementCount: number;
+      photosCount: number;
+    };
 
-    const zai = await ZAI.create();
+    const systemPrompt =
+      "Bạn là trợ lý AI của app fitness RunTrack, chuyên viết tổng kết tháng chạy bộ cá nhân hóa, truyền cảm hứng. Luôn trả về JSON hợp lệ theo đúng schema yêu cầu.";
 
     const userPrompt = `Viết tổng kết tháng chạy bộ cá nhân hóa cho người dùng app RunTrack. Dữ liệu tháng ${data.monthLabel}:
 
@@ -47,7 +46,7 @@ export async function POST(req: NextRequest) {
 - Cân nặng mục tiêu: ${data.targetWeight ?? "?"} kg
 - Mục tiêu km/tuần: ${data.weeklyGoalKm ?? "?"} km
 - Thành tích mở khoá: ${data.achievementCount}
--  ảnh kỉ niệm: ${data.photosCount}
+- Ảnh kỉ niệm: ${data.photosCount}
 
 Hãy viết theo ĐÚNG định dạng JSON sau, KHÔNG thêm text nào khác:
 {
@@ -62,47 +61,28 @@ Quy tắc:
 - Nếu weightChange âm (giảm) và hướng tới mục tiêu → khen ngợi. Nếu dương mà đang giảm cân → gợi ý nhẹ.
 - highlights nên đa dạng: km, streak, calo, thành tích, hoặc cân nặng.`;
 
-    const completion = await zai.chat.completions.create({
-      messages: [
-        {
-          role: "assistant",
-          content:
-            "Bạn là trợ lý AI của app fitness RunTrack, chuyên viết tổng kết tháng chạy bộ cá nhân hóa, truyền cảm hứng. Luôn trả về JSON hợp lệ theo đúng schema yêu cầu.",
-        },
-        { role: "user", content: userPrompt },
-      ],
-      thinking: { type: "disabled" },
-    });
+    const raw = await chatCompletion(systemPrompt, userPrompt);
+    const parsed = parseAIJson<RecapOutput>(raw);
 
-    const raw = completion.choices[0]?.message?.content ?? "";
-
-    // Try to extract JSON from the response (LLMs sometimes wrap in ```json)
-    let parsed: RecapOutput;
-    try {
-      // strip code fences if present
-      const cleaned = raw
-        .replace(/^```json\s*/i, "")
-        .replace(/^```\s*/i, "")
-        .replace(/```\s*$/i, "")
-        .trim();
-      parsed = JSON.parse(cleaned);
-    } catch {
-      // fallback: return the raw text as narrative
-      parsed = {
+    if (!parsed) {
+      return NextResponse.json({
         headline: `📊 Tổng kết ${data.monthLabel}`,
-        narrative: raw || `Tháng ${data.monthLabel}, bạn đã chạy ${data.totalKm} km trong ${data.totalRuns} buổi. Tiếp tục phát nhé!`,
+        narrative: `Tháng ${data.monthLabel}, bạn đã chạy ${data.totalKm} km trong ${data.totalRuns} buổi. Tiếp tục phát nhé!`,
         highlights: [],
-      };
+        error: "AI không parse được JSON",
+      });
     }
 
     return NextResponse.json(parsed);
   } catch (e) {
     console.error("recap API error:", e);
+    const msg = e instanceof Error ? e.message : "Lỗi không xác định";
     return NextResponse.json(
       {
         headline: "📊 Tổng kết tháng",
         narrative: "Không thể tạo lời bình AI lúc này, nhưng hành trình của bạn vẫn rất đáng tự hào!",
         highlights: [],
+        error: `AI lỗi: ${msg}`,
       },
       { status: 200 }
     );

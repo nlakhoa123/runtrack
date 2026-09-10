@@ -1,5 +1,6 @@
 // RunTrack — full backend schema (auth + groups + shared stories)
 // Dev: SQLite (file:...) | Prod: PostgreSQL (Vercel + Neon)
+// To deploy: change provider to "postgresql" + set DATABASE_URL to Neon connection string
 
 generator client {
   provider = "prisma-client-js"
